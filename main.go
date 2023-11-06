@@ -9,9 +9,13 @@ func main() {
 	ch := make(chan bool)
 	d := d.DOM{
 		Body: d.Body(
-			Section1(),
-			Section2(),
-			Section3(),
+			Title(),
+			DownloadAndInstall(),
+			WriteAProgram(),
+			WebServer(),
+			ReadFile(),
+			WriteFile(),
+			Credits(),
 		),
 	}
 
@@ -21,7 +25,7 @@ func main() {
 
 }
 
-func Section1() d.Node {
+func Title() d.Node {
 	return Section(
 		"golang - the simple guide",
 		"bg-slate-100",
@@ -44,7 +48,7 @@ func Section1() d.Node {
 	)
 }
 
-func Section2() d.Node {
+func DownloadAndInstall() d.Node {
 	return Section(
 		"Setup",
 		"bg-blue-400",
@@ -72,7 +76,7 @@ func Subsection3(text string) d.Node {
 	return d.Div(d.Props{Class: d.NewClass("flex flex-row pb-10")},
 		d.Div(d.Props{ID: "center svg left", Class: d.NewClass("basis-2/6")}),
 		d.Pre(d.Props{
-			Class: d.NewClass("bg-slate-800", "p-2", "rounded-lg", "text-slate-200", "basis-2/6"),
+			Class: d.NewClass("bg-slate-800", "p-4", "rounded-lg", "text-slate-200", "basis-2/6"),
 		},
 			d.Code(d.Props{
 				Class:     d.NewClass("text-2xl text-left"),
@@ -83,7 +87,7 @@ func Subsection3(text string) d.Node {
 	)
 }
 
-func Section3() d.Node {
+func WriteAProgram() d.Node {
 	return SectionWithNode(
 		"write a program",
 		"bg-sky-700",
@@ -92,31 +96,22 @@ func Section3() d.Node {
 		Subsection3("command: go run main.go"),
 	)
 
-	// d.Div(d.Props{ID: "Section 3"},
-	// 	d.Div(d.Props{InnerHTML: "write a program"}),
-	// 	d.Div(d.Props{},
-	// 		d.Div(d.Props{
-	// 			InnerHTML: `
-	// 					# file main.go
-	// 					package main
-
-	// 					import "fmt"
-
-	// 					func main() {
-	// 						fmt.Println("my go program")
-	// 					}`,
-	// 		}),
-	// 		d.Div(d.Props{InnerHTML: "then call"}),
-	// 		d.Div(d.Props{
-	// 			InnerHTML: `go run main.go`,
-	// 		}),
-	// 	),
-	// ),
 }
+func Credits() d.Node {
 
-// d.Div(d.Props{InnerHTML: "Setup"}),
-// d.Div(d.Props{},
-// 	d.A(d.Props{HRef: "https://go.dev/doc/install", InnerHTML: "Download & install go"}),
+	return Section(
+		"Credits",
+		"bg-slate-200",
+		d.Div(d.Props{InnerHTML: "highly influenced by one of the best sites on the web ", Class: d.NewClass("pb-20")},
+			d.A(d.Props{
+				Class:     d.NewClass("hover:underline", "bg-slate-800", "p-2", "rounded-lg", "text-slate-200"),
+				HRef:      "https://rogerdudler.github.io/git-guide/",
+				InnerHTML: "git - the simple guide"},
+			),
+		),
+		d.Div(d.Props{}),
+	)
+}
 
 func Section(heading string, bgColor string, content d.Node, diagram d.Node) d.Node {
 	return d.Div(d.Props{ID: heading, Class: d.NewClass("w-full font-serif pt-20", bgColor)},
@@ -147,39 +142,112 @@ func SectionWithNode(heading string, bgColor string, nodes ...d.Node) d.Node {
 
 }
 
-func SectionAll() d.Node {
-	return d.Div(d.Props{},
+var webserverCode string = `package main
 
-		d.Div(d.Props{ID: "Section 4"},
-			d.Div(d.Props{InnerHTML: "setup a web server"}),
-			d.Div(d.Props{},
-				d.Div(d.Props{
-					InnerHTML: `
-							# file main.go
-							package main
+import (
+    "fmt"
+    "net/http"
+)
 
-							import (
-							    "fmt"
-							    "net/http"
-							)
-							
-							func main() {
-							
-							    handler := func(w http.ResponseWriter, r *http.Request) {
-							        fmt.Fprintf(w, "hello from server")
-							    }
-							
-							    http.HandleFunc("/", handler)
-							
-							    if err := http.ListenAndServe(":8080", nil); err != nil {
-							        fmt.Println("Error:", err)
-							    }
-							}`,
-				}),
-				d.Div(d.Props{
-					InnerHTML: `go run main.go and now visit localhost:8080`,
-				}),
-			),
-		),
+func main() {
+    handler := func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintf(w, "hello from server")
+    }
+
+    http.HandleFunc("/", handler)
+
+    if err := http.ListenAndServe(":8080", nil); err != nil {
+        log.Printf("server crashed, error:%v", err)
+    }
+}`
+
+func WebServer() d.Node {
+	return SectionWithNode(
+		"create a web server",
+		"bg-orange-500",
+		Subsection3("filename: main.go"),
+		Subsection3(webserverCode),
+		Subsection3("command: go run main.go & visit localhost:8080"),
 	)
+
+}
+
+var readfileProgram string = `
+package main
+
+import (
+    "fmt"
+    "io/ioutil"
+    "os"
+)
+
+func main() {
+
+    file, err := os.Open("myfile.txt")
+    if err != nil {
+		// this will exit your program 
+        log.Fatalf("open file error: %v", err) 
+    }
+	// close when you're done
+    defer file.Close() 
+
+    data, err := ioutil.ReadAll(file)
+    if err != nil {
+        log.Fatalf("read error: %v", err)
+    }
+
+    fmt.Println("%s", data)
+}
+`
+
+func ReadFile() d.Node {
+	return SectionWithNode(
+		"read a file into a program",
+		"bg-violet-600",
+		Subsection3("filename: main.go with file myfile.txt stored alongside"),
+		Subsection3(readfileProgram),
+		Subsection3("command: go run main.go"),
+	)
+
+}
+
+// # write files
+
+var writefileProgram string = `
+package main
+
+import (
+    "fmt"
+    "os"
+)
+
+func main() {
+    filePath := "myFile.txt"
+
+    file, err := os.Create(filePath)
+    if err != nil {
+        log.Fatalf("create file error: %v", err)
+    }
+
+	// Ensure the file is closed when we're done
+    defer file.Close() 
+
+    data := []byte("go wrote this.\n")
+
+    _, err = file.Write(data)
+    if err != nil {
+        log.Fatalf("write file error: %v", err)
+    }
+}
+`
+
+func WriteFile() d.Node {
+	return SectionWithNode(
+		"write to a file",
+		"bg-emerald-500",
+		Subsection3("filename: main.go"),
+		Subsection3(writefileProgram),
+		Subsection3("command: go run main.go and you should get myfile.txt"),
+	)
+
 }

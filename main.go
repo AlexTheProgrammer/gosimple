@@ -13,9 +13,11 @@ func main() {
 			DownloadAndInstall(),
 			CreateAModule(),
 			WriteAProgram(),
+			Debugging(),
 			WebServer(),
 			ReadFile(),
 			WriteFile(),
+			Types(),
 			Credits(),
 		),
 	}
@@ -26,13 +28,86 @@ func main() {
 
 }
 
+var debugProgram string = `package main
+
+import "log"
+
+func main() {
+
+	log.Printf("here is a log, but what line is it on?")
+	log.SetFlags(log.Lshortfile) // configure logger
+	log.Printf("<- here is the line number")
+}
+`
+
+func Debugging() d.Node {
+	return SectionWithNode(
+		"debugging a program",
+		"bg-rose-300",
+		midText("often you will want logs, but the default logger needs to be configured to return file name/line number"),
+		codeSection(debugProgram),
+		codeSection("go run main.go"),
+	)
+
+}
+
+var typesProgram string = `package main
+
+import (
+	"fmt"
+	"log"
+	"strconv"
+)
+
+func main() {
+
+	anInt := 1
+	aFloatAsaString := "2.3"
+	aIntAsaString := "4"
+
+	f, err := strconv.ParseFloat(aFloatAsaString, 64)
+	if err != nil {
+		log.Fatalf("could not convert to float, error: %v", err)
+	}
+
+	i, err := strconv.Atoi(aIntAsaString)
+	if err != nil {
+		log.Fatalf("could not convert to int, error: %v", err)
+	}
+
+    // when golang knows how to convert you can use the Type(var) syntax
+	convertingIsTricky := float64(anInt) + f + float64(i)
+
+	fmt.Printf(
+		"anInt +  aFloatAsaString + aIntAsaString = %v but is tricky to code\n", 
+		convertingIsTricky,
+	)
+
+	fmt.Printf(
+		"anInt +  aFloatAsaString + aIntAsaString = %v%v%v is easy to concatenate\n", 
+		anInt, aFloatAsaString, aIntAsaString,
+	)
+
+}
+`
+
+func Types() d.Node {
+	return SectionWithNode(
+		"handling types",
+		"bg-sky-700",
+		midText("go is strongly typed. So sometimes you need to wrangle your data into the right type"),
+		codeSection(typesProgram),
+		codeSection("go run main.go"),
+	)
+
+}
+
 func CreateAModule() d.Node {
 
 	return SectionWithNode(
-		"write a program",
+		"create a module",
 		"bg-purple-700",
 		midText("every go program exists in it's own module to manage dependencies"),
-		midText("command"),
 		codeSection("go mod init myModule"),
 		midText("you will now have a file called go.mod equilavent to package.json for web devs"),
 	)
@@ -110,7 +185,6 @@ func WriteAProgram() d.Node {
 		"bg-sky-700",
 		midText("filename - main.go"),
 		codeSection(writeAProgram),
-		midText("command"),
 		codeSection("go run main.go"),
 	)
 
@@ -120,12 +194,13 @@ func Credits() d.Node {
 	return Section(
 		"Credits",
 		"bg-slate-200",
-		d.Div(d.Props{InnerHTML: "highly influenced by one of the best sites on the web ", Class: d.NewClass("pb-20")},
-			d.A(d.Props{
-				Class:     d.NewClass("hover:underline", "bg-slate-800", "p-2", "rounded-lg", "text-slate-200"),
+		d.Div(d.Props{Class: d.NewClass("pb-20")},
+			d.Div(d.Props{InnerHTML: "highly influenced by one of the best sites on the web ", Class: d.NewClass("pb-5")}),
+			d.B(d.Props{}, d.A(d.Props{
+				Class:     d.NewClass("hover:underline", "p-2", "rounded-lg"),
 				HRef:      "https://rogerdudler.github.io/git-guide/",
 				InnerHTML: "git - the simple guide"},
-			),
+			)),
 		),
 		d.Div(d.Props{}),
 	)
@@ -187,7 +262,8 @@ func WebServer() d.Node {
 		midText("filename - main.go"),
 		codeSection(webserverCode),
 		midText("now run your web server and see your message"),
-		codeSection("go run main.go & visit localhost:8080"),
+		codeSection("go run main.go"),
+		midText("now visit localhost:8080 in your browser"),
 	)
 
 }

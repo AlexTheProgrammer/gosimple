@@ -161,6 +161,7 @@ func main() {
 		log.Fatalf("could not convert to int, error: %v", err)
 	}
 
+    // when golang knows how to convert you can use the Type(var) syntax
 	convertingIsTricky := float64(anInt) + f + float64(i)
 
 	fmt.Printf("anInt +  aFloatAsaString + aIntAsaString = %v but is tricky to code\n", convertingIsTricky)

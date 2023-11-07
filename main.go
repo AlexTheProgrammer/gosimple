@@ -11,6 +11,7 @@ func main() {
 		Body: d.Body(
 			Title(),
 			DownloadAndInstall(),
+			CreateAModule(),
 			WriteAProgram(),
 			WebServer(),
 			ReadFile(),
@@ -23,6 +24,18 @@ func main() {
 
 	<-ch // block indefinitely to keep program alive
 
+}
+
+func CreateAModule() d.Node {
+
+	return SectionWithNode(
+		"write a program",
+		"bg-purple-700",
+		midText("every go program exists in it's own module to manage dependencies"),
+		midText("command"),
+		codeSection("go mod init myModule"),
+		midText("you will now have a file called go.mod equilavent to package.json for web devs"),
+	)
 }
 
 func Title() d.Node {
@@ -71,7 +84,7 @@ func main() {
 	fmt.Println("my go program")
 }`
 
-func Subsection3(text string) d.Node {
+func codeSection(text string) d.Node {
 
 	return d.Div(d.Props{Class: d.NewClass("flex flex-row pb-10")},
 		d.Div(d.Props{ID: "center svg left", Class: d.NewClass("basis-2/6")}),
@@ -87,13 +100,18 @@ func Subsection3(text string) d.Node {
 	)
 }
 
+func midText(innerHTML string) d.Node {
+	return d.Div(d.Props{InnerHTML: innerHTML, Class: d.NewClass("w-full text-center text-3xl pb-10")})
+}
+
 func WriteAProgram() d.Node {
 	return SectionWithNode(
 		"write a program",
 		"bg-sky-700",
-		Subsection3("filename: main.go"),
-		Subsection3(writeAProgram),
-		Subsection3("command: go run main.go"),
+		midText("filename - main.go"),
+		codeSection(writeAProgram),
+		midText("command"),
+		codeSection("go run main.go"),
 	)
 
 }
@@ -165,9 +183,11 @@ func WebServer() d.Node {
 	return SectionWithNode(
 		"create a web server",
 		"bg-orange-500",
-		Subsection3("filename: main.go"),
-		Subsection3(webserverCode),
-		Subsection3("command: go run main.go & visit localhost:8080"),
+
+		midText("filename - main.go"),
+		codeSection(webserverCode),
+		midText("now run your web server and see your message"),
+		codeSection("go run main.go & visit localhost:8080"),
 	)
 
 }
@@ -204,9 +224,9 @@ func ReadFile() d.Node {
 	return SectionWithNode(
 		"read a file into a program",
 		"bg-violet-600",
-		Subsection3("filename: main.go with file myfile.txt stored alongside"),
-		Subsection3(readfileProgram),
-		Subsection3("command: go run main.go"),
+		midText("filename - main.go with file myfile.txt stored alongside"),
+		codeSection(readfileProgram),
+		codeSection("go run main.go"),
 	)
 
 }
@@ -245,9 +265,9 @@ func WriteFile() d.Node {
 	return SectionWithNode(
 		"write to a file",
 		"bg-emerald-500",
-		Subsection3("filename: main.go"),
-		Subsection3(writefileProgram),
-		Subsection3("command: go run main.go and you should get myfile.txt"),
+		midText("filename - main.go"),
+		codeSection(writefileProgram),
+		codeSection("go run main.go"),
+		midText("and you should get myfile.txt"),
 	)
-
 }

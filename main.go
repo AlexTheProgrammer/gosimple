@@ -261,9 +261,9 @@ func WebServer() d.Node {
 
 		midText("filename - main.go"),
 		codeSection(webserverCode),
-		midText("now run your web server and see your message"),
+		midText("run your web server and see your message"),
 		codeSection("go run main.go"),
-		midText("now visit localhost:8080 in your browser"),
+		midText("visit localhost:8080 in your browser"),
 	)
 
 }
